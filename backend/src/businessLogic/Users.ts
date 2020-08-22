@@ -22,7 +22,7 @@ export async function createUser(event: APIGatewayProxyEvent,
     adminId,
     userId,
     createdAt,
-   attachmentUrl: `https://${userStorageLayer.getBucketName()}.s3.amazonaws.com/${userId}`,
+    attachmentUrl: `https://${userStorageLayer.getBucketName()}.s3.amazonaws.com/${userId}`,
     ...createuserRequest
   };
 

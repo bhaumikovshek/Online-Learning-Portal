@@ -21,7 +21,8 @@ provider:
   runtime: nodejs12.x
   apiGateway:
     minimumCompressionSize: 1024 # Enable gzip compression for responses > 1 KB
-    
+  stage: ${opt:stage, 'dev'}
+  region: ${opt:region, 'us-east-1'} 
 
   environment:
     #AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
@@ -130,6 +131,24 @@ functions:
           - "dynamodb:GetItem"
         Effect: Allow
         Resource: "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.USERS_TABLE}"
+
+  GenerateUploadUrl: 
+    events: 
+      - 
+        http: 
+          authorizer: Auth
+          cors: true
+          method: post
+          path: "users/{userId}/attachment"
+    handler: src/lambda/http/generateUploadUrl.handler
+    iamRoleStatements: 
+      - 
+        Action: 
+          - "s3:PutObject"
+          - "s3:GetObject"
+        Effect: Allow
+        Resource: "arn:aws:s3:::${self:provider.environment.S3_BUCKET}/*"
+      
 
 resources:
   Resources:
